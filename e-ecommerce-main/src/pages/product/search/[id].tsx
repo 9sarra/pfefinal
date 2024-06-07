@@ -1,0 +1,106 @@
+import Box from "@component/Box";
+import IconButton from "@component/buttons/IconButton";
+import Card from "@component/Card";
+import FlexBox from "@component/FlexBox";
+import Grid from "@component/grid/Grid";
+import Hidden from "@component/hidden/Hidden";
+import Icon from "@component/icon/Icon";
+import NavbarLayout from "@component/layout/NavbarLayout";
+import ProductCard1List from "@component/products/ProductCard1List";
+import ProductCard9List from "@component/products/ProductCard9List";
+import ProductFilterCard from "@component/products/ProductFilterCard";
+import Select from "@component/Select";
+import Sidenav from "@component/sidenav/Sidenav";
+import { H5, Paragraph } from "@component/Typography";
+import React, { useCallback, useState } from "react";
+import useWindowSize from "../../../hooks/useWindowSize";
+import { useRouter } from "next/router";
+const ProductSearchResult = () => {
+  const router = useRouter();
+  const { id } = router.query;
+
+  const [view, setView] = useState("grid");
+  const width = useWindowSize();
+  const isTablet = width < 1025;
+
+  const toggleView = useCallback(
+    (v) => () => {
+      setView(v);
+    },
+    []
+  );
+
+  return (
+    <Box pt="20px">
+      <FlexBox
+        p="1.25rem"
+        flexWrap="wrap"
+        justifyContent="space-between"
+        alignItems="center"
+        mb="55px"
+        elevation={5}
+        as={Card}
+      >
+        <div>
+          <H5>Searching for “ mobile phone ”</H5>
+          <Paragraph color="text.muted">48 results found</Paragraph>
+        </div>
+        <FlexBox alignItems="center" flexWrap="wrap">
+
+          <Paragraph color="text.muted" mr="0.5rem">
+            View:
+          </Paragraph>
+          <IconButton size="small" onClick={toggleView("grid")}>
+            <Icon
+              variant="small"
+              defaultcolor="auto"
+              color={view === "grid" ? "primary" : "inherit"}
+            >
+              grid
+            </Icon>
+          </IconButton>
+          <IconButton size="small" onClick={toggleView("list")}>
+            <Icon
+              variant="small"
+              defaultcolor="auto"
+              color={view === "list" ? "primary" : "inherit"}
+            >
+              menu
+            </Icon>
+          </IconButton>
+
+          {isTablet && (
+            <Sidenav
+              position="left"
+              scroll={true}
+              handle={
+                <IconButton size="small">
+                  <Icon>options</Icon>
+                </IconButton>
+              }
+            >
+              <ProductFilterCard />
+            </Sidenav>
+          )}
+        </FlexBox>
+      </FlexBox>
+
+      <Grid container spacing={6}>
+        
+
+        <Grid item lg={9} xs={12}>
+          {view === "grid" ? (
+            <ProductCard1List id={id} />
+          ) : (
+            <ProductCard9List id={id} />
+          )}
+        </Grid>
+      </Grid>
+    </Box>
+  );
+};
+
+
+ProductSearchResult.layout = NavbarLayout;
+
+export default ProductSearchResult;
